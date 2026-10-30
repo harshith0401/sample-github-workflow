@@ -1,0 +1,79 @@
+# CampusTrack — College Attendance Tracker
+
+A starter Flask application for recording and viewing college attendance. It includes admin/student logins, daily attendance entry, CSV import/export, percentage calculations, and a low-attendance warning.
+
+## 1. Requirements
+- Python 3.10 or newer
+- Windows PowerShell (commands below) or macOS/Linux
+- An authorized CSV export from your college portal, or permission from your college IT team to use its API/database
+
+## 2. Run on Windows PowerShell
+Open PowerShell in this project folder:
+
+```powershell
+py -m venv venv
+.\venv\Scripts\Activate.ps1
+pip install -r requirements.txt
+$env:SECRET_KEY = "replace-this-with-a-long-random-secret"
+py app.py
+```
+
+If PowerShell blocks activation, run this once for the current terminal:
+```powershell
+Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
+.\venv\Scripts\Activate.ps1
+```
+
+Open http://127.0.0.1:5000
+
+## 3. Demo accounts
+- Admin: `admin` / `Admin@123`
+- Student: `STU001` / `Student@123`
+
+Change both demo passwords immediately. Create real student accounts from **Students**. The database file `attendance.db` is created automatically.
+
+## 4. Daily attendance
+1. Sign in as admin.
+2. Open **Students** and create student accounts.
+3. Open **Mark attendance** and select student, date, subject, and Present/Absent.
+4. Students sign in with their student ID and see their own attendance percentage and records.
+5. Import a CSV from **Import CSV**, or download all records from **Export report**.
+
+Attendance percentage = (Present class records / Total recorded class records) × 100.
+Each subject on each date is treated as one class session. Avoid importing duplicate student/date/subject records.
+
+## 5. Import CSV format
+The first row must contain these exact headers:
+
+```csv
+student_id,attendance_date,subject,status
+STU001,2026-10-30,Mathematics,Present
+STU001,2026-10-30,Physics,Absent
+```
+
+- Date format: `YYYY-MM-DD`
+- Status: `Present` or `Absent`
+- Student IDs must already exist in the app.
+
+## 6. Connecting to your college portal
+This starter does **not** log in to or scrape an unknown college portal. Portal login pages differ, may use OTP/CAPTCHA/SSO, and automated scraping may violate college policy. Use an integration method approved by your college:
+
+**Preferred options**
+1. Ask the college IT/admin team for an official attendance API or read-only integration account.
+2. Ask for a scheduled CSV/Excel export and import it using this app.
+3. If the college authorizes database access, request a read-only account and documented schema.
+
+Once the college provides an approved API/export format, implement a connector that maps its fields to:
+`student_id`, `attendance_date`, `subject`, `status`.
+Do not store your personal college portal password in this app or share it in chat.
+
+## 7. Before real deployment
+This is a learning/demo starter, not a production-ready college system. Before exposing it to a network:
+- Change the demo passwords and set a strong random `SECRET_KEY`.
+- Turn off Flask debug mode; use a production WSGI server.
+- Add CSRF protection, HTTPS, rate limiting, audit logs, backups, and role/record authorization tests.
+- Restrict access to the college network and follow your institution's data/privacy policy.
+- Have the college IT team review the portal integration and security.
+
+## 8. Reset demo database
+Stop the app, then delete `attendance.db`. Restart `py app.py` to recreate the demo database.
