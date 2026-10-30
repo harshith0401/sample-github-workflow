@@ -1,0 +1,611 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CineBook - Movie Ticket Booking</title>
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+body {
+    background: #080d19;
+    color: white;
+    min-height: 100vh;
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 22px 7%;
+    background: #10192b;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    box-shadow: 0 4px 15px #0005;
+}
+
+.logo {
+    color: #ff4757;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.logo span {
+    color: white;
+}
+
+nav a {
+    color: white;
+    text-decoration: none;
+    margin-left: 25px;
+    transition: .3s;
+}
+
+nav a:hover {
+    color: #ff4757;
+}
+
+.hero {
+    text-align: center;
+    padding: 65px 15px 35px;
+    background: linear-gradient(120deg, #151f37, #321c38);
+}
+
+.hero h1 {
+    font-size: 42px;
+    animation: slideDown 1s;
+}
+
+.hero h1 span {
+    color: #ff4757;
+}
+
+.hero p {
+    color: #bbb;
+    margin-top: 12px;
+}
+
+.container {
+    max-width: 1150px;
+    margin: auto;
+    padding: 35px 20px;
+}
+
+.section-title {
+    font-size: 25px;
+    margin-bottom: 25px;
+}
+
+.movies {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+    gap: 25px;
+}
+
+.movie {
+    background: #141f33;
+    border-radius: 15px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: .4s;
+    border: 2px solid transparent;
+}
+
+.movie:hover {
+    transform: translateY(-10px) scale(1.02);
+    box-shadow: 0 10px 25px #ff475744;
+}
+
+.movie.active {
+    border-color: #ff4757;
+}
+
+.poster {
+    height: 245px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 85px;
+    background: linear-gradient(135deg, #253b65, #772b43);
+}
+
+.poster.two {
+    background: linear-gradient(135deg, #42235c, #bb6436);
+}
+
+.poster.three {
+    background: linear-gradient(135deg, #125a68, #1c315b);
+}
+
+.poster.four {
+    background: linear-gradient(135deg, #71422d, #2c234c);
+}
+
+.movie-info {
+    padding: 15px;
+}
+
+.movie-info h3 {
+    margin-bottom: 8px;
+}
+
+.movie-info p {
+    color: #aaa;
+    font-size: 13px;
+}
+
+.booking {
+    background: #141f33;
+    border-radius: 15px;
+    padding: 25px;
+    margin-top: 45px;
+}
+
+.booking h2 {
+    margin-bottom: 20px;
+}
+
+select, input {
+    background: #25334d;
+    border: 1px solid #40506b;
+    padding: 12px;
+    border-radius: 7px;
+    color: white;
+    outline: none;
+    margin: 8px 8px 8px 0;
+}
+
+.showtimes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin: 15px 0 25px;
+}
+
+.time {
+    padding: 11px 20px;
+    border: 1px solid #63718a;
+    border-radius: 7px;
+    cursor: pointer;
+    transition: .3s;
+}
+
+.time:hover, .time.active {
+    background: #ff4757;
+    border-color: #ff4757;
+}
+
+.screen {
+    height: 45px;
+    max-width: 500px;
+    margin: 30px auto 45px;
+    border-top: 5px solid #ff4757;
+    border-radius: 50% 50% 0 0;
+    text-align: center;
+    padding-top: 12px;
+    color: #aaa;
+    letter-spacing: 5px;
+    box-shadow: 0 -10px 25px #ff475733;
+}
+
+.seats {
+    display: grid;
+    grid-template-columns: repeat(8, 1fr);
+    gap: 12px;
+    max-width: 460px;
+    margin: auto;
+}
+
+.seat {
+    height: 32px;
+    border-radius: 8px 8px 4px 4px;
+    background: #34445e;
+    cursor: pointer;
+    transition: .25s;
+}
+
+.seat:hover:not(.booked) {
+    transform: scale(1.15);
+}
+
+.seat.selected {
+    background: #2ed573;
+}
+
+.seat.booked {
+    background: #ff4757;
+    cursor: not-allowed;
+    opacity: .65;
+}
+
+.legend {
+    display: flex;
+    justify-content: center;
+    gap: 22px;
+    margin: 25px 0;
+    flex-wrap: wrap;
+    color: #ccc;
+    font-size: 13px;
+}
+
+.legend span {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+}
+
+.dot {
+    width: 15px;
+    height: 15px;
+    display: inline-block;
+    border-radius: 4px;
+    background: #34445e;
+}
+
+.dot.green { background: #2ed573; }
+.dot.red { background: #ff4757; }
+
+.summary {
+    border-top: 1px solid #40506b;
+    margin-top: 25px;
+    padding-top: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.total {
+    color: #2ed573;
+    font-size: 25px;
+    font-weight: bold;
+}
+
+button {
+    background: #ff4757;
+    color: white;
+    padding: 13px 25px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 15px;
+    transition: .3s;
+}
+
+button:hover {
+    background: #e52e40;
+    transform: scale(1.05);
+}
+
+button:disabled {
+    background: #555;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: #000c;
+    z-index: 20;
+    justify-content: center;
+    align-items: center;
+    padding: 15px;
+}
+
+.modal-content {
+    background: #17243a;
+    padding: 35px;
+    border-radius: 15px;
+    text-align: center;
+    max-width: 420px;
+    width: 100%;
+    animation: zoomIn .4s;
+}
+
+.modal-content h2 {
+    color: #2ed573;
+    margin-bottom: 15px;
+}
+
+.modal-content p {
+    margin: 10px 0;
+    color: #ccc;
+}
+
+footer {
+    text-align: center;
+    padding: 25px;
+    color: #888;
+    background: #10192b;
+    margin-top: 50px;
+}
+
+@keyframes slideDown {
+    from { opacity: 0; transform: translateY(-30px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes zoomIn {
+    from { transform: scale(.7); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+}
+
+@media(max-width:600px) {
+    header { padding: 18px; }
+    nav a { margin-left: 10px; font-size: 12px; }
+    .hero h1 { font-size: 29px; }
+    .seats { gap: 7px; }
+    .seat { height: 27px; }
+    .booking { padding: 15px; }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <div class="logo">Cine<span>Book</span> 🎬</div>
+    <nav>
+        <a href="#home">Home</a>
+        <a href="#movies">Movies</a>
+        <a href="#booking">Book Tickets</a>
+    </nav>
+</header>
+
+<section class="hero" id="home">
+    <h1>Book Your <span>Movie</span> Tickets</h1>
+    <p>Enjoy your favourite movies on the big screen!</p>
+</section>
+
+<div class="container" id="movies">
+
+    <h2 class="section-title">🎥 Now Showing</h2>
+
+    <div class="movies">
+
+        <div class="movie active" onclick="chooseMovie(this, 'Avengers: Endgame', 200)">
+            <div class="poster">🦸</div>
+            <div class="movie-info">
+                <h3>Avengers: Endgame</h3>
+                <p>Action | 3h 01m</p>
+                <p>⭐ 9.0/10</p>
+            </div>
+        </div>
+
+        <div class="movie" onclick="chooseMovie(this, 'Inception', 180)">
+            <div class="poster two">🌀</div>
+            <div class="movie-info">
+                <h3>Inception</h3>
+                <p>Sci-Fi | 2h 28m</p>
+                <p>⭐ 8.8/10</p>
+            </div>
+        </div>
+
+        <div class="movie" onclick="chooseMovie(this, 'Interstellar', 220)">
+            <div class="poster three">🚀</div>
+            <div class="movie-info">
+                <h3>Interstellar</h3>
+                <p>Sci-Fi | 2h 49m</p>
+                <p>⭐ 8.7/10</p>
+            </div>
+        </div>
+
+        <div class="movie" onclick="chooseMovie(this, 'Joker', 170)">
+            <div class="poster four">🃏</div>
+            <div class="movie-info">
+                <h3>Joker</h3>
+                <p>Drama | 2h 02m</p>
+                <p>⭐ 8.5/10</p>
+            </div>
+        </div>
+
+    </div>
+
+    <section class="booking" id="booking">
+
+        <h2>🎟 Book Your Tickets</h2>
+
+        <p>Selected Movie: <strong id="movieName">Avengers: Endgame</strong></p>
+
+        <br>
+
+        <label>Select Date:</label>
+        <input type="date" id="date">
+
+        <h3 style="margin-top:20px">Select Showtime</h3>
+
+        <div class="showtimes">
+            <div class="time active" onclick="chooseTime(this, '10:00 AM')">10:00 AM</div>
+            <div class="time" onclick="chooseTime(this, '01:30 PM')">01:30 PM</div>
+            <div class="time" onclick="chooseTime(this, '04:30 PM')">04:30 PM</div>
+            <div class="time" onclick="chooseTime(this, '07:30 PM')">07:30 PM</div>
+            <div class="time" onclick="chooseTime(this, '10:00 PM')">10:00 PM</div>
+        </div>
+
+        <h3>Select Your Seats</h3>
+
+        <div class="screen">SCREEN THIS WAY</div>
+
+        <div class="seats" id="seats"></div>
+
+        <div class="legend">
+            <span><i class="dot"></i> Available</span>
+            <span><i class="dot green"></i> Selected</span>
+            <span><i class="dot red"></i> Booked</span>
+        </div>
+
+        <div class="summary">
+            <div>
+                <p>Selected Seats: <strong id="seatCount">0</strong></p>
+                <p>Ticket Price: ₹<span id="price">200</span></p>
+                <p class="total">Total: ₹<span id="total">0</span></p>
+            </div>
+
+            <button id="bookBtn" onclick="bookTickets()" disabled>
+                Confirm Booking
+            </button>
+        </div>
+
+    </section>
+</div>
+
+<div class="modal" id="modal">
+    <div class="modal-content">
+        <h2>✓ Booking Successful!</h2>
+        <p>Your movie tickets have been booked.</p>
+        <p id="confirmation"></p>
+        <button onclick="closeModal()">Done</button>
+    </div>
+</div>
+
+<footer>
+    © 2026 CineBook | Movie Ticket Booking System
+</footer>
+
+<script>
+
+let selectedMovie = "Avengers: Endgame";
+let ticketPrice = 200;
+let selectedTime = "10:00 AM";
+let selectedSeats = [];
+
+const seatContainer = document.getElementById("seats");
+
+const bookedSeats = [3, 8, 14, 22, 29, 38, 45, 51];
+
+for(let i = 1; i <= 56; i++) {
+
+    let seat = document.createElement("div");
+
+    seat.className = "seat";
+    seat.innerText = i;
+    seat.dataset.number = i;
+
+    if(bookedSeats.includes(i)) {
+        seat.classList.add("booked");
+    }
+
+    seat.onclick = function() {
+
+        if(seat.classList.contains("booked")) return;
+
+        let number = Number(seat.dataset.number);
+
+        if(seat.classList.contains("selected")) {
+            seat.classList.remove("selected");
+            selectedSeats = selectedSeats.filter(s => s !== number);
+        } else {
+            seat.classList.add("selected");
+            selectedSeats.push(number);
+        }
+
+        updateTotal();
+    };
+
+    seatContainer.appendChild(seat);
+}
+
+function chooseMovie(element, name, price) {
+
+    document.querySelectorAll(".movie").forEach(m => {
+        m.classList.remove("active");
+    });
+
+    element.classList.add("active");
+
+    selectedMovie = name;
+    ticketPrice = price;
+
+    document.getElementById("movieName").innerText = name;
+    document.getElementById("price").innerText = price;
+
+    updateTotal();
+}
+
+function chooseTime(element, time) {
+
+    document.querySelectorAll(".time").forEach(t => {
+        t.classList.remove("active");
+    });
+
+    element.classList.add("active");
+    selectedTime = time;
+}
+
+function updateTotal() {
+
+    let count = selectedSeats.length;
+    let total = count * ticketPrice;
+
+    document.getElementById("seatCount").innerText = count;
+    document.getElementById("total").innerText = total;
+
+    document.getElementById("bookBtn").disabled = count === 0;
+}
+
+function bookTickets() {
+
+    let date = document.getElementById("date").value;
+
+    if(!date) {
+        alert("Please select a movie date!");
+        return;
+    }
+
+    if(new Date(date + "T00:00:00") < new Date(new Date().toDateString())) {
+        alert("Please select today or a future date!");
+        return;
+    }
+
+    let total = selectedSeats.length * ticketPrice;
+
+    document.getElementById("confirmation").innerHTML =
+        "<b>Movie:</b> " + selectedMovie +
+        "<br><b>Date:</b> " + date +
+        "<br><b>Show:</b> " + selectedTime +
+        "<br><b>Seats:</b> " + selectedSeats.join(", ") +
+        "<br><b>Total Amount:</b> ₹" + total;
+
+    document.getElementById("modal").style.display = "flex";
+
+    // Mark seats as booked after confirmation
+    selectedSeats.forEach(number => {
+        let seat = document.querySelector(
+            '.seat[data-number="' + number + '"]'
+        );
+
+        seat.classList.remove("selected");
+        seat.classList.add("booked");
+    });
+
+    selectedSeats = [];
+    updateTotal();
+}
+
+function closeModal() {
+    document.getElementById("modal").style.display = "none";
+}
+
+const today = new Date();
+const localDate = new Date(
+    today.getTime() - today.getTimezoneOffset() * 60000
+).toISOString().split("T")[0];
+
+document.getElementById("date").min = localDate;
+document.getElementById("date").value = localDate;
+
+</script>
+
+</body>
+</html>
